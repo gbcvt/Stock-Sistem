@@ -19,7 +19,7 @@ const ActivityIcon: React.FC<{type: AdjustmentLog['type']}> = ({ type }) => {
 const RecentActivity: React.FC<RecentActivityProps> = ({ history }) => {
     
   if (history.length === 0) {
-    return <div className="text-center py-10 px-4 text-stone-500">Nenhuma atividade no período selecionado.</div>;
+    return <div className="text-center py-10 px-4 text-slate-500">Nenhuma atividade no período selecionado.</div>;
   }
 
   const formatDescription = (log: AdjustmentLog) => {
@@ -47,13 +47,13 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ history }) => {
   }
 
   return (
-    <div className="flow-root max-h-80 overflow-y-auto">
+    <div className="flow-root max-h-96 overflow-y-auto">
         <ul role="list" className="-mb-8 px-6 pb-6">
             {history.map((log, logIdx) => (
             <li key={log.id}>
                 <div className="relative pb-8">
                 {logIdx !== history.length - 1 ? (
-                    <span className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-stone-200" aria-hidden="true" />
+                    <span className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-slate-200" aria-hidden="true" />
                 ) : null}
                 <div className="relative flex items-start space-x-3">
                     <div>
@@ -61,11 +61,11 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ history }) => {
                     </div>
                     <div className="min-w-0 flex-1">
                         <div>
-                            <p className="text-sm text-stone-600">
-                                <span className="font-semibold text-stone-800">{log.productName}</span> {formatDescription(log)}
+                            <p className="text-sm text-slate-600">
+                                <span className="font-semibold text-slate-800">{log.productName}</span> {formatDescription(log)}
                             </p>
                         </div>
-                        <p className="mt-0.5 text-xs text-stone-500">{timeAgo(log.date)}</p>
+                        <p className="mt-0.5 text-xs text-slate-500">{timeAgo(log.date)}</p>
                     </div>
                 </div>
                 </div>

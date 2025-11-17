@@ -34,28 +34,27 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ adjustmentHistory, suppliers 
   }, [adjustmentHistory, startDate, endDate]);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm">
-      <div className="p-4 sm:p-6 border-b border-stone-200 space-y-4">
-        <h2 className="text-2xl font-bold text-stone-700">Relatório de Ajustes</h2>
+    <div className="bg-white rounded-xl shadow-sm">
+      <div className="p-4 sm:p-6 border-b border-slate-200 space-y-4">
         <div className="flex flex-col sm:flex-row gap-4 items-center">
           <div>
-            <label htmlFor="start-date" className="block text-sm font-medium text-stone-700">Data de Início</label>
+            <label htmlFor="start-date" className="block text-sm font-medium text-slate-700">Data de Início</label>
             <input
               type="date"
               id="start-date"
               value={startDate}
               onChange={e => setStartDate(e.target.value)}
-              className="mt-1 block w-full sm:w-auto px-3 py-2 border border-stone-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+              className="mt-1 block w-full sm:w-auto px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
             />
           </div>
           <div>
-            <label htmlFor="end-date" className="block text-sm font-medium text-stone-700">Data de Fim</label>
+            <label htmlFor="end-date" className="block text-sm font-medium text-slate-700">Data de Fim</label>
             <input
               type="date"
               id="end-date"
               value={endDate}
               onChange={e => setEndDate(e.target.value)}
-              className="mt-1 block w-full sm:w-auto px-3 py-2 border border-stone-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+              className="mt-1 block w-full sm:w-auto px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
             />
           </div>
         </div>
@@ -65,8 +64,8 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ adjustmentHistory, suppliers 
         <AdjustmentsTable logs={filteredHistory} suppliers={suppliers}/>
       ) : (
         <div className="text-center py-16 px-4">
-          <p className="text-stone-600 text-xl font-semibold">Nenhum ajuste encontrado</p>
-          <p className="text-stone-500 mt-2">Tente ajustar o período do filtro.</p>
+          <p className="text-slate-600 text-xl font-semibold">Nenhum ajuste encontrado</p>
+          <p className="text-slate-500 mt-2">Tente ajustar o período do filtro.</p>
         </div>
       )}
     </div>

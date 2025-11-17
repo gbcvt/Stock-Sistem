@@ -4,14 +4,16 @@ import type { Product } from '../types';
 import SearchBar from '../components/SearchBar';
 import StockStatusFilter from '../components/StockStatusFilter';
 import type { StockStatus } from '../types';
+import PlusIcon from '../components/icons/PlusIcon';
 
 interface InventoryPageProps {
     products: Product[];
     onEditProduct: (product: Product) => void;
     onAdjustStock: (product: Product) => void;
+    onAddProduct: () => void;
 }
 
-const InventoryPage: React.FC<InventoryPageProps> = ({ products, onEditProduct, onAdjustStock }) => {
+const InventoryPage: React.FC<InventoryPageProps> = ({ products, onEditProduct, onAdjustStock, onAddProduct }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [stockFilter, setStockFilter] = useState<StockStatus>('all');
 
@@ -46,10 +48,9 @@ const InventoryPage: React.FC<InventoryPageProps> = ({ products, onEditProduct, 
     }, [products, searchTerm, stockFilter]);
 
     return (
-        <div className="bg-white rounded-lg shadow-sm">
-            <div className="p-4 sm:p-6 border-b border-stone-200 space-y-4">
+        <div className="space-y-6">
+            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm space-y-4">
                 <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-                    <h2 className="text-2xl font-bold text-stone-700">Inventário de Insumos</h2>
                     <div className="w-full sm:w-64 md:w-80">
                         <SearchBar 
                             searchTerm={searchTerm} 
@@ -59,13 +60,13 @@ const InventoryPage: React.FC<InventoryPageProps> = ({ products, onEditProduct, 
                     </div>
                 </div>
                 <div>
-                    <label className="text-sm font-medium text-stone-600 block mb-2">Filtrar por status:</label>
+                    <label className="text-sm font-medium text-slate-600 block mb-2">Filtrar por status:</label>
                     <StockStatusFilter activeFilter={stockFilter} onFilterChange={setStockFilter} />
                 </div>
             </div>
 
             {filteredProducts.length > 0 ? (
-                <div className="divide-y divide-stone-200">
+                <div className="space-y-4">
                     {filteredProducts.map(product => (
                         <ProductListItem
                             key={product.id}
@@ -76,9 +77,16 @@ const InventoryPage: React.FC<InventoryPageProps> = ({ products, onEditProduct, 
                     ))}
                 </div>
             ) : (
-                <div className="text-center py-16 px-4">
-                    <p className="text-stone-600 text-xl font-semibold">Nenhum insumo encontrado</p>
-                    <p className="text-stone-500 mt-2">Tente ajustar seus filtros ou termos de pesquisa.</p>
+                <div className="text-center py-16 px-4 bg-white rounded-xl shadow-sm">
+                    <p className="text-slate-600 text-xl font-semibold">Nenhum insumo encontrado</p>
+                    <p className="text-slate-500 mt-2">Tente ajustar seus filtros ou termos de pesquisa.</p>
+                     <button
+                        onClick={onAddProduct}
+                        className="mt-6 inline-flex items-center justify-center rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors duration-200"
+                    >
+                        <PlusIcon className="h-5 w-5 mr-2" />
+                        Adicionar Primeiro Insumo
+                    </button>
                 </div>
             )}
         </div>

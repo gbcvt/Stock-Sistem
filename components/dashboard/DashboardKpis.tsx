@@ -21,17 +21,17 @@ const ShoppingCartIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 );
 
 
-const StatCard: React.FC<{ title: string; value: string | number; icon: React.ReactNode; color: string; tooltip?: string }> = ({ title, value, icon, color, tooltip }) => (
-  <div className="bg-white p-5 rounded-lg shadow-sm flex items-center space-x-4 relative group">
-    <div className={`p-3 rounded-lg ${color}`}>
+const StatCard: React.FC<{ title: string; value: string | number; icon: React.ReactNode; colorClasses: string; tooltip?: string }> = ({ title, value, icon, colorClasses, tooltip }) => (
+  <div className="bg-white p-5 rounded-xl shadow-sm flex items-center space-x-4 relative group">
+    <div className={`p-3 rounded-lg ${colorClasses}`}>
       {icon}
     </div>
     <div>
-      <p className="text-sm font-medium text-stone-500">{title}</p>
-      <p className="text-2xl font-bold text-stone-800">{value}</p>
+      <p className="text-sm font-medium text-slate-500">{title}</p>
+      <p className="text-2xl font-bold text-slate-800">{value}</p>
     </div>
     {tooltip && (
-      <div className="absolute bottom-full mb-2 w-max px-2 py-1 bg-stone-700 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+      <div className="absolute bottom-full mb-2 w-max px-2 py-1 bg-slate-700 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
         {tooltip}
       </div>
     )}
@@ -63,27 +63,27 @@ const DashboardKpis: React.FC<DashboardKpisProps> = ({ products, adjustmentHisto
       <StatCard
         title="Valor Total do Estoque"
         value={formatCurrency(kpis.totalValue)}
-        icon={<DollarSignIcon className="h-6 w-6 text-green-800" />}
-        color="bg-green-100"
+        icon={<DollarSignIcon className="h-6 w-6" />}
+        colorClasses="bg-green-100 text-green-600"
       />
       <StatCard
         title="Itens em Atenção"
         value={kpis.attentionItems}
-        icon={<AlertTriangleIcon className="h-6 w-6 text-amber-800" />}
-        color="bg-amber-100"
+        icon={<AlertTriangleIcon className="h-6 w-6" />}
+        colorClasses="bg-amber-100 text-amber-600"
         tooltip="Itens com estoque baixo ou próximo do nível de recompra."
       />
       <StatCard
         title={investmentLabel}
         value={formatCurrency(kpis.monthlyInvestment)}
-        icon={<ShoppingCartIcon className="h-6 w-6 text-blue-800" />}
-        color="bg-blue-100"
+        icon={<ShoppingCartIcon className="h-6 w-6" />}
+        colorClasses="bg-blue-100 text-blue-600"
       />
       <StatCard
         title="Variedade de Insumos"
         value={kpis.productVarieties}
-        icon={<LayersIcon className="h-6 w-6 text-indigo-800" />}
-        color="bg-indigo-100"
+        icon={<LayersIcon className="h-6 w-6" />}
+        colorClasses="bg-indigo-100 text-indigo-600"
       />
     </div>
   );

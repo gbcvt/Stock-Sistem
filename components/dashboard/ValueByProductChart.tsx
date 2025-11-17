@@ -21,7 +21,7 @@ const ValueByProductChart: React.FC<ValueByProductChartProps> = ({ products }) =
   }, [topProductsByValue]);
 
   if (products.length === 0) {
-    return <div className="flex items-center justify-center h-full text-stone-500">Sem dados de insumos.</div>;
+    return <div className="flex items-center justify-center h-full text-slate-500">Sem dados de insumos.</div>;
   }
   
   const formatCurrency = (value: number) => {
@@ -30,22 +30,20 @@ const ValueByProductChart: React.FC<ValueByProductChartProps> = ({ products }) =
 
   return (
     <div className="space-y-4 pt-4 h-full flex flex-col justify-around">
-      {topProductsByValue.map((product, index) => (
-        <div key={product.id} className="flex items-center gap-4">
-          <div className="w-2/5 truncate text-sm font-medium text-stone-600" title={product.name}>
+      {topProductsByValue.map((product) => (
+        <div key={product.id} className="flex items-center gap-4 group">
+          <div className="w-2/5 truncate text-sm font-medium text-slate-600" title={product.name}>
             {product.name}
           </div>
-          <div className="w-3/5">
-            <div className="flex justify-between items-center mb-1">
-              <div className="relative w-full bg-stone-100 rounded-full h-4">
-                <div
-                  className="bg-orange-700 h-4 rounded-full transition-all duration-500"
-                  style={{ width: `${maxValue > 0 ? (product.totalValue / maxValue) * 100 : 0}%` }}
-                ></div>
-              </div>
-              <div className="w-24 text-right text-sm font-semibold text-stone-800 ml-2">
-                {formatCurrency(product.totalValue)}
-              </div>
+          <div className="w-3/5 flex items-center">
+            <div className="relative w-full bg-slate-100 rounded-full h-4 mr-4">
+              <div
+                className="bg-orange-500 h-4 rounded-full transition-all duration-500 group-hover:bg-orange-600"
+                style={{ width: `${maxValue > 0 ? (product.totalValue / maxValue) * 100 : 0}%` }}
+              ></div>
+            </div>
+            <div className="w-24 text-right text-sm font-semibold text-slate-800">
+              {formatCurrency(product.totalValue)}
             </div>
           </div>
         </div>

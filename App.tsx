@@ -5,7 +5,7 @@ import StockAdjustModal from './components/StockAdjustModal';
 import RecipeModal from './components/RecipeModal';
 import SupplierModal from './components/SupplierModal';
 import ProductionModal from './components/ProductionModal';
-import AppNavigation from './components/AppNavigation';
+import Sidebar from './components/Sidebar';
 import DashboardPage from './pages/DashboardPage';
 import InventoryPage from './pages/InventoryPage';
 import ReportsPage from './pages/ReportsPage';
@@ -16,7 +16,14 @@ import { useProducts } from './hooks/useProducts';
 import { useRecipes } from './hooks/useRecipes';
 import { useSuppliers } from './hooks/useSuppliers';
 
-type Page = 'dashboard' | 'inventory' | 'reports' | 'recipes' | 'suppliers';
+export type Page = 'dashboard' | 'inventory' | 'reports' | 'recipes' | 'suppliers';
+export const pageTitles: Record<Page, string> = {
+  dashboard: 'Dashboard',
+  inventory: 'Inventário',
+  reports: 'Relatórios',
+  recipes: 'Receitas',
+  suppliers: 'Fornecedores'
+};
 
 const App: React.FC = () => {
   const { 
@@ -36,6 +43,7 @@ const App: React.FC = () => {
   const [isRecipeModalOpen, setRecipeModalOpen] = useState(false);
   const [isSupplierModalOpen, setSupplierModalOpen] = useState(false);
   const [isProductionModalOpen, setProductionModalOpen] = useState(false);
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null);
@@ -92,7 +100,7 @@ const App: React.FC = () => {
   const renderPage = () => {
     switch (currentPage) {
       case 'dashboard': return <DashboardPage products={products} adjustmentHistory={adjustmentHistory} onAdjustStock={handleOpenStockModal} />;
-      case 'inventory': return <InventoryPage products={sortedProducts} onEditProduct={handleOpenEditModal} onAdjustStock={handleOpenStockModal}/>;
+      case 'inventory': return <InventoryPage onAddProduct={handleOpenAddModal} products={sortedProducts} onEditProduct={handleOpenEditModal} onAdjustStock={handleOpenStockModal}/>;
       case 'reports': return <ReportsPage adjustmentHistory={adjustmentHistory} suppliers={suppliers} />;
       case 'recipes': return <RecipesPage recipes={recipes} products={products} onAdd={handleOpenAddRecipeModal} onEdit={handleOpenEditRecipeModal} onDelete={deleteRecipe} onProduce={handleOpenProductionModal} />;
       case 'suppliers': return <SuppliersPage suppliers={suppliers} onAdd={handleOpenAddSupplierModal} onEdit={handleOpenEditSupplierModal} onDelete={deleteSupplier} />;
@@ -101,13 +109,26 @@ const App: React.FC = () => {
   };
   
   return (
-    <div className="min-h-screen bg-orange-50/50 text-stone-800">
-      <Header onAddProduct={handleOpenAddModal} lowStockCount={lowStockCount} />
+    <div className="min-h-screen bg-slate-50 text-slate-800 flex">
+      <Sidebar 
+        currentPage={currentPage} 
+        setCurrentPage={setCurrentPage}
+        isSidebarOpen={isSidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+      />
 
-      <main className="container mx-auto p-4 sm:p-6 lg:p-8">
-        <AppNavigation currentPage={currentPage} setCurrentPage={setCurrentPage} />
-        <div className="mt-6">{renderPage()}</div>
-      </main>
+      <div className="flex-1 flex flex-col min-w-0">
+        <Header 
+          onAddProduct={handleOpenAddModal} 
+          lowStockCount={lowStockCount} 
+          currentPage={currentPage}
+          onToggleSidebar={() => setSidebarOpen(!isSidebarOpen)}
+        />
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+          {renderPage()}
+        </main>
+      </div>
+
 
       <ProductModal isOpen={isProductModalOpen} onClose={handleCloseModals} onSave={handleSaveProduct} productToEdit={editingProduct} />
       <StockAdjustModal isOpen={isStockModalOpen} onClose={handleCloseModals} onAdjust={handleAdjustStock} product={adjustingStockProduct} suppliers={suppliers} />

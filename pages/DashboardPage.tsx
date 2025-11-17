@@ -45,32 +45,32 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ products, adjustmentHisto
         filterDate={filterDate}
       />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1 bg-white p-6 rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold text-stone-700">Saúde do Estoque</h3>
+        <div className="lg:col-span-1 bg-white p-6 rounded-xl shadow-sm">
+            <h3 className="text-lg font-semibold text-slate-700">Saúde do Estoque</h3>
             <StockStatusChart products={products} />
         </div>
-        <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold text-stone-700">Top 5 Insumos por Valor em Estoque</h3>
+        <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm">
+            <h3 className="text-lg font-semibold text-slate-700">Top 5 Insumos por Valor em Estoque</h3>
             <ValueByProductChart products={products} />
         </div>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="bg-white rounded-lg shadow-sm lg:col-span-2">
-            <h3 className="text-lg font-semibold text-stone-700 p-6">
-              Atividades em {filterDate.toLocaleString('pt-BR', { month: 'long', year: 'numeric' })}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl shadow-sm">
+             <h3 className="text-lg font-semibold text-slate-700 p-6 border-b border-slate-200">
+              Itens Críticos
             </h3>
-            <RecentActivity history={filteredHistoryForMonth} />
+            <LowStockList products={products} onAdjustStock={onAdjustStock} />
         </div>
-        <div className="grid grid-rows-2 gap-6">
-            <div className="bg-white rounded-lg shadow-sm">
-                <h3 className="text-lg font-semibold text-stone-700 p-6">Itens Críticos</h3>
-                <LowStockList products={products} onAdjustStock={onAdjustStock} />
-            </div>
-             <div className="bg-white rounded-lg shadow-sm">
-                <h3 className="text-lg font-semibold text-stone-700 p-6">Validade Próxima</h3>
-                <ExpiringSoon adjustmentHistory={adjustmentHistory} />
-            </div>
+        <div className="bg-white rounded-xl shadow-sm">
+             <h3 className="text-lg font-semibold text-slate-700 p-6 border-b border-slate-200">Validade Próxima</h3>
+             <ExpiringSoon adjustmentHistory={adjustmentHistory} />
         </div>
+      </div>
+       <div className="bg-white rounded-xl shadow-sm">
+          <h3 className="text-lg font-semibold text-slate-700 p-6 border-b border-slate-200">
+            Atividades em {filterDate.toLocaleString('pt-BR', { month: 'long', year: 'numeric' })}
+          </h3>
+          <RecentActivity history={filteredHistoryForMonth} />
       </div>
     </div>
   );

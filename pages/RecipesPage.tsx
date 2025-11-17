@@ -14,17 +14,17 @@ interface RecipesPageProps {
 }
 
 const PlayIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polygon points="5 3 19 12 5 21 5 3"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polygon points="5 3 19 12 5 21 5 3"/></svg>
 );
 
 const RecipeCard: React.FC<{ recipe: Recipe; productMap: Map<string, string>; onEdit: () => void; onDelete: () => void; onProduce: () => void; }> = ({ recipe, productMap, onEdit, onDelete, onProduce }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md flex flex-col">
+    <div className="bg-white rounded-xl shadow-sm flex flex-col transition-shadow duration-200 hover:shadow-lg">
       <div className="p-6 flex-grow">
-        <h3 className="text-xl font-semibold text-stone-800">{recipe.name}</h3>
+        <h3 className="text-xl font-semibold text-slate-800">{recipe.name}</h3>
         <div className="mt-4">
-          <h4 className="font-semibold text-sm text-stone-600">Ingredientes:</h4>
-          <ul className="list-disc list-inside mt-2 space-y-1 text-sm text-stone-700">
+          <h4 className="font-semibold text-sm text-slate-600">Ingredientes:</h4>
+          <ul className="list-disc list-inside mt-2 space-y-1 text-sm text-slate-700">
             {recipe.ingredients.map(ing => (
               <li key={ing.productId}>
                 {productMap.get(ing.productId) || 'Insumo desconhecido'}: {ing.quantity}
@@ -34,19 +34,19 @@ const RecipeCard: React.FC<{ recipe: Recipe; productMap: Map<string, string>; on
         </div>
         {recipe.instructions && (
            <div className="mt-4">
-              <h4 className="font-semibold text-sm text-stone-600">Instruções:</h4>
-              <p className="text-sm text-stone-700 mt-1 whitespace-pre-wrap">{recipe.instructions}</p>
+              <h4 className="font-semibold text-sm text-slate-600">Instruções:</h4>
+              <p className="text-sm text-slate-700 mt-1 whitespace-pre-wrap">{recipe.instructions}</p>
            </div>
         )}
       </div>
-      <div className="p-4 bg-stone-50 grid grid-cols-3 gap-2">
-        <button onClick={onEdit} className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md text-orange-800 bg-orange-100 hover:bg-orange-200 transition-colors">
+      <div className="p-4 bg-slate-50/70 grid grid-cols-3 gap-2">
+        <button onClick={onEdit} className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md text-orange-700 bg-orange-100 hover:bg-orange-200 transition-colors">
           <EditIcon className="w-4 h-4 mr-2"/> Editar
         </button>
-        <button onClick={onDelete} className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md text-red-800 bg-red-100 hover:bg-red-200 transition-colors">
+        <button onClick={onDelete} className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 transition-colors">
           <TrashIcon className="w-4 h-4 mr-2"/> Remover
         </button>
-        <button onClick={onProduce} className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md text-green-800 bg-green-100 hover:bg-green-200 transition-colors">
+        <button onClick={onProduce} className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 transition-colors">
           <PlayIcon className="w-4 h-4 mr-2"/> Produzir
         </button>
       </div>
@@ -59,9 +59,8 @@ const RecipesPage: React.FC<RecipesPageProps> = ({ recipes, products, onAdd, onE
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-stone-700">Minhas Receitas</h2>
-        <button onClick={onAdd} className="inline-flex items-center justify-center rounded-md bg-orange-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-900 transition-colors">
+      <div className="flex justify-end items-center mb-6">
+        <button onClick={onAdd} className="inline-flex items-center justify-center rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-700 transition-colors">
           <PlusIcon className="h-5 w-5 mr-2" />
           Nova Receita
         </button>
@@ -80,9 +79,9 @@ const RecipesPage: React.FC<RecipesPageProps> = ({ recipes, products, onAdd, onE
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 px-4 bg-white rounded-lg shadow-sm">
-          <p className="text-stone-600 text-xl font-semibold">Nenhuma receita cadastrada</p>
-          <p className="text-stone-500 mt-2">Clique em "Nova Receita" para começar.</p>
+        <div className="text-center py-16 px-4 bg-white rounded-xl shadow-sm">
+          <p className="text-slate-600 text-xl font-semibold">Nenhuma receita cadastrada</p>
+          <p className="text-slate-500 mt-2">Clique em "Nova Receita" para começar.</p>
         </div>
       )}
     </div>
