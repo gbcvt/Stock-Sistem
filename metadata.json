@@ -1,0 +1,5 @@
+{
+  "name": "Gerenciador de Estoque da Padaria",
+  "description": "Uma aplicação web para gerenciar o estoque de produtos de uma panificadora, permitindo adicionar, editar e ajustar os níveis de estoque, com alertas visuais para itens que precisam de reposição.",
+  "requestFramePermissions": []
+}
