@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import type { Product, AdjustmentData } from '../types';
+import type { Product, AdjustmentData, Supplier } from '../types';
 import XIcon from './icons/XIcon';
 import PlusIcon from './icons/PlusIcon';
 import MinusIcon from './icons/MinusIcon';
@@ -11,18 +10,23 @@ interface StockAdjustModalProps {
   onClose: () => void;
   onAdjust: (productId: string, adjustmentData: AdjustmentData) => void;
   product: Product | null;
+  suppliers: Supplier[];
 }
 
-const StockAdjustModal: React.FC<StockAdjustModalProps> = ({ isOpen, onClose, onAdjust, product }) => {
+const StockAdjustModal: React.FC<StockAdjustModalProps> = ({ isOpen, onClose, onAdjust, product, suppliers }) => {
   const [amount, setAmount] = useState<number>(1);
-  const [cost, setCost] = useState<number>(0);
+  const [totalPurchaseCost, setTotalPurchaseCost] = useState<number>(0);
   const [adjustmentType, setAdjustmentType] = useState<'add' | 'remove' | 'balance'>('add');
+  const [supplierId, setSupplierId] = useState<string>('');
+  const [expirationDate, setExpirationDate] = useState<string>('');
 
   useEffect(() => {
     if (isOpen) {
         setAdjustmentType('add');
         setAmount(1);
-        setCost(0);
+        setTotalPurchaseCost(0);
+        setSupplierId('');
+        setExpirationDate('');
     }
   }, [isOpen]);
 
@@ -39,8 +43,10 @@ const StockAdjustModal: React.FC<StockAdjustModalProps> = ({ isOpen, onClose, on
       type: adjustmentType,
       value: amount,
     };
-    if (adjustmentType === 'add' && cost > 0) {
-      adjustmentData.cost = cost;
+    if (adjustmentType === 'add') {
+      adjustmentData.totalPurchaseCost = totalPurchaseCost;
+      adjustmentData.supplierId = supplierId;
+      adjustmentData.expirationDate = expirationDate;
     }
     onAdjust(product.id, adjustmentData);
   };
@@ -57,8 +63,8 @@ const StockAdjustModal: React.FC<StockAdjustModalProps> = ({ isOpen, onClose, on
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md relative">
-        <div className="p-6 border-b">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-md relative max-h-[90vh] overflow-y-auto">
+        <div className="p-6 border-b sticky top-0 bg-white z-10">
           <h3 className="text-xl font-semibold text-stone-800">
             Ajustar Estoque: <span className="text-orange-800">{product.name}</span>
           </h3>
@@ -98,17 +104,18 @@ const StockAdjustModal: React.FC<StockAdjustModalProps> = ({ isOpen, onClose, on
             </div>
             
             {adjustmentType === 'add' && (
+              <>
                 <div>
-                    <label htmlFor="cost" className="block text-sm font-medium text-stone-700">Valor Investido (R$)</label>
+                    <label htmlFor="totalPurchaseCost" className="block text-sm font-medium text-stone-700">Custo Total da Compra (R$)</label>
                     <div className="relative mt-1 rounded-md shadow-sm">
                         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                             <span className="text-stone-500 sm:text-sm">R$</span>
                         </div>
                         <input 
                             type="number" 
-                            id="cost" 
-                            value={cost} 
-                            onChange={e => setCost(parseFloat(e.target.value) || 0)} 
+                            id="totalPurchaseCost" 
+                            value={totalPurchaseCost} 
+                            onChange={e => setTotalPurchaseCost(parseFloat(e.target.value) || 0)} 
                             min="0"
                             step="0.01"
                             placeholder="0.00"
@@ -116,9 +123,27 @@ const StockAdjustModal: React.FC<StockAdjustModalProps> = ({ isOpen, onClose, on
                         />
                     </div>
                 </div>
+                <div>
+                  <label htmlFor="supplier" className="block text-sm font-medium text-stone-700">Fornecedor (Opcional)</label>
+                  <select id="supplier" value={supplierId} onChange={e => setSupplierId(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-stone-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm">
+                    <option value="">Nenhum</option>
+                    {suppliers.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                  </select>
+                </div>
+                 <div>
+                  <label htmlFor="expirationDate" className="block text-sm font-medium text-stone-700">Data de Validade (Opcional)</label>
+                  <input
+                    type="date"
+                    id="expirationDate"
+                    value={expirationDate}
+                    onChange={e => setExpirationDate(e.target.value)}
+                    className="mt-1 block w-full px-3 py-2 border border-stone-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                  />
+                </div>
+              </>
             )}
           </div>
-          <div className="px-6 py-4 bg-stone-50 flex justify-end space-x-2">
+          <div className="px-6 py-4 bg-stone-50 flex justify-end space-x-2 sticky bottom-0 z-10">
             <button type="button" onClick={onClose} className="px-4 py-2 border border-stone-300 text-sm font-medium rounded-md text-stone-700 bg-white hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-500">
               Cancelar
             </button>

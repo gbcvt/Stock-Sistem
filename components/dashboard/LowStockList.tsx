@@ -28,8 +28,7 @@ const LowStockList: React.FC<LowStockListProps> = ({ products, onAdjustStock }) 
     <div className="divide-y divide-stone-200">
       {lowStockProducts.map(product => (
         <div key={product.id} className="flex items-center p-4">
-          <img src={product.imageUrl} alt={product.name} className="h-10 w-10 rounded-full object-cover" />
-          <div className="ml-4 flex-grow">
+          <div className="flex-grow">
             <div className="font-semibold text-stone-800">{product.name}</div>
             <div className="text-sm text-stone-500">
               Estoque: <span className="font-bold text-red-600">{product.stock}</span> / {product.reorderLevel}

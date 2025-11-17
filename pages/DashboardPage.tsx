@@ -6,6 +6,7 @@ import ValueByProductChart from '../components/dashboard/ValueByProductChart';
 import LowStockList from '../components/dashboard/LowStockList';
 import RecentActivity from '../components/dashboard/RecentActivity';
 import DashboardDateFilter from '../components/dashboard/DashboardDateFilter';
+import ExpiringSoon from '../components/dashboard/ExpiringSoon';
 
 interface DashboardPageProps {
   products: Product[];
@@ -21,7 +22,6 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ products, adjustmentHisto
     if (!years.has(new Date().getFullYear())) {
         years.add(new Date().getFullYear());
     }
-    // FIX: Explicitly type the sort parameters as numbers to resolve the TypeScript error on the arithmetic operation.
     return Array.from(years).sort((a: number, b: number) => b - a);
   }, [adjustmentHistory]);
 
@@ -50,20 +50,26 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ products, adjustmentHisto
             <StockStatusChart products={products} />
         </div>
         <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold text-stone-700">Top 5 Produtos por Valor em Estoque</h3>
+            <h3 className="text-lg font-semibold text-stone-700">Top 5 Insumos por Valor em Estoque</h3>
             <ValueByProductChart products={products} />
         </div>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold text-stone-700 p-6">Itens Críticos (Estoque Baixo)</h3>
-            <LowStockList products={products} onAdjustStock={onAdjustStock} />
-        </div>
-        <div className="bg-white rounded-lg shadow-sm">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="bg-white rounded-lg shadow-sm lg:col-span-2">
             <h3 className="text-lg font-semibold text-stone-700 p-6">
               Atividades em {filterDate.toLocaleString('pt-BR', { month: 'long', year: 'numeric' })}
             </h3>
             <RecentActivity history={filteredHistoryForMonth} />
+        </div>
+        <div className="grid grid-rows-2 gap-6">
+            <div className="bg-white rounded-lg shadow-sm">
+                <h3 className="text-lg font-semibold text-stone-700 p-6">Itens Críticos</h3>
+                <LowStockList products={products} onAdjustStock={onAdjustStock} />
+            </div>
+             <div className="bg-white rounded-lg shadow-sm">
+                <h3 className="text-lg font-semibold text-stone-700 p-6">Validade Próxima</h3>
+                <ExpiringSoon adjustmentHistory={adjustmentHistory} />
+            </div>
         </div>
       </div>
     </div>

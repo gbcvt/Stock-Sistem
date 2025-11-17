@@ -49,9 +49,13 @@ const InventoryPage: React.FC<InventoryPageProps> = ({ products, onEditProduct, 
         <div className="bg-white rounded-lg shadow-sm">
             <div className="p-4 sm:p-6 border-b border-stone-200 space-y-4">
                 <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-                    <h2 className="text-2xl font-bold text-stone-700">Inventário de Produtos</h2>
+                    <h2 className="text-2xl font-bold text-stone-700">Inventário de Insumos</h2>
                     <div className="w-full sm:w-64 md:w-80">
-                        <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+                        <SearchBar 
+                            searchTerm={searchTerm} 
+                            onSearchChange={setSearchTerm}
+                            placeholder="Pesquisar insumos..."
+                        />
                     </div>
                 </div>
                 <div>
@@ -73,7 +77,7 @@ const InventoryPage: React.FC<InventoryPageProps> = ({ products, onEditProduct, 
                 </div>
             ) : (
                 <div className="text-center py-16 px-4">
-                    <p className="text-stone-600 text-xl font-semibold">Nenhum produto encontrado</p>
+                    <p className="text-stone-600 text-xl font-semibold">Nenhum insumo encontrado</p>
                     <p className="text-stone-500 mt-2">Tente ajustar seus filtros ou termos de pesquisa.</p>
                 </div>
             )}

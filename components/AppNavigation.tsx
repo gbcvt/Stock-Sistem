@@ -2,16 +2,22 @@ import React from 'react';
 import ChartPieIcon from './icons/ChartPieIcon';
 import ListIcon from './icons/ListIcon';
 import ArchiveIcon from './icons/ArchiveIcon';
+import ChefHatIcon from './icons/ChefHatIcon';
+import TruckIcon from './icons/TruckIcon';
+
+type Page = 'dashboard' | 'inventory' | 'reports' | 'recipes' | 'suppliers';
 
 interface AppNavigationProps {
-    currentPage: 'dashboard' | 'inventory' | 'reports';
-    setCurrentPage: (page: 'dashboard' | 'inventory' | 'reports') => void;
+    currentPage: Page;
+    setCurrentPage: (page: Page) => void;
 }
 
 const AppNavigation: React.FC<AppNavigationProps> = ({ currentPage, setCurrentPage }) => {
     const navItems = [
         { id: 'dashboard', label: 'Dashboard', icon: ChartPieIcon },
         { id: 'inventory', label: 'Inventário', icon: ListIcon },
+        { id: 'recipes', label: 'Receitas', icon: ChefHatIcon },
+        { id: 'suppliers', label: 'Fornecedores', icon: TruckIcon },
         { id: 'reports', label: 'Relatórios', icon: ArchiveIcon },
     ];
 
@@ -23,7 +29,7 @@ const AppNavigation: React.FC<AppNavigationProps> = ({ currentPage, setCurrentPa
                     name="tabs"
                     className="block w-full rounded-md border-stone-300 focus:border-orange-500 focus:ring-orange-500"
                     value={currentPage}
-                    onChange={(e) => setCurrentPage(e.target.value as 'dashboard' | 'inventory' | 'reports')}
+                    onChange={(e) => setCurrentPage(e.target.value as Page)}
                 >
                     {navItems.map((item) => (
                         <option key={item.id} value={item.id}>{item.label}</option>
@@ -36,7 +42,7 @@ const AppNavigation: React.FC<AppNavigationProps> = ({ currentPage, setCurrentPa
                         {navItems.map((item) => (
                             <button
                                 key={item.id}
-                                onClick={() => setCurrentPage(item.id as 'dashboard' | 'inventory' | 'reports')}
+                                onClick={() => setCurrentPage(item.id as Page)}
                                 className={`${
                                     currentPage === item.id
                                         ? 'border-orange-700 text-orange-800'

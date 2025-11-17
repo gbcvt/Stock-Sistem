@@ -10,7 +10,7 @@ const ValueByProductChart: React.FC<ValueByProductChartProps> = ({ products }) =
     return products
       .map(p => ({
         ...p,
-        totalValue: p.stock * p.unitPrice,
+        totalValue: p.stock * p.averageCost,
       }))
       .sort((a, b) => b.totalValue - a.totalValue)
       .slice(0, 5);
@@ -21,7 +21,7 @@ const ValueByProductChart: React.FC<ValueByProductChartProps> = ({ products }) =
   }, [topProductsByValue]);
 
   if (products.length === 0) {
-    return <div className="flex items-center justify-center h-full text-stone-500">Sem dados de produtos.</div>;
+    return <div className="flex items-center justify-center h-full text-stone-500">Sem dados de insumos.</div>;
   }
   
   const formatCurrency = (value: number) => {

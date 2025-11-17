@@ -1,9 +1,10 @@
-
 import React from 'react';
 import PlusIcon from './icons/PlusIcon';
+import AlertTriangleIcon from './icons/AlertTriangleIcon';
 
 interface HeaderProps {
   onAddProduct: () => void;
+  lowStockCount: number;
 }
 
 const BreadIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -16,7 +17,7 @@ const BreadIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 );
 
 
-const Header: React.FC<HeaderProps> = ({ onAddProduct }) => {
+const Header: React.FC<HeaderProps> = ({ onAddProduct, lowStockCount }) => {
   return (
     <header className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-10">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,14 +28,27 @@ const Header: React.FC<HeaderProps> = ({ onAddProduct }) => {
               Estoque da Padaria
             </h1>
           </div>
-          <button
-            onClick={onAddProduct}
-            className="inline-flex items-center justify-center rounded-md bg-orange-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-orange-700 focus:ring-offset-2 transition-colors duration-200"
-          >
-            <PlusIcon className="h-5 w-5 mr-2" />
-            <span className="hidden sm:inline">Adicionar Produto</span>
-            <span className="sm:hidden">Adicionar</span>
-          </button>
+          <div className="flex items-center space-x-4">
+            {lowStockCount > 0 && (
+                <div 
+                    className="flex items-center p-2 rounded-full bg-red-100/80 cursor-pointer"
+                    title={`${lowStockCount} insumo(s) com estoque baixo`}
+                >
+                    <AlertTriangleIcon className="h-5 w-5 text-red-600" />
+                    <span className="ml-2 text-sm font-bold text-red-700 hidden sm:block">
+                        {lowStockCount}
+                    </span>
+                </div>
+            )}
+            <button
+              onClick={onAddProduct}
+              className="inline-flex items-center justify-center rounded-md bg-orange-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-900 focus:outline-none focus:ring-2 focus:ring-orange-700 focus:ring-offset-2 transition-colors duration-200"
+            >
+              <PlusIcon className="h-5 w-5 mr-2" />
+              <span className="hidden sm:inline">Adicionar Insumo</span>
+              <span className="sm:hidden">Adicionar</span>
+            </button>
+          </div>
         </div>
       </div>
     </header>

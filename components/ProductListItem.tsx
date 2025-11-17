@@ -42,11 +42,6 @@ const ProductListItem: React.FC<ProductListItemProps> = ({ product, onEdit, onAd
 
   return (
     <div className={`flex flex-col sm:flex-row items-center transition-colors duration-200 hover:bg-stone-50 border-l-4 ${status.borderClass}`}>
-      <img
-        className="h-32 w-full sm:h-28 sm:w-28 object-cover flex-shrink-0"
-        src={product.imageUrl}
-        alt={product.name}
-      />
       <div className="p-4 flex-grow w-full">
         <div className="flex justify-between items-start">
             <h3 className="text-lg font-semibold text-stone-800 truncate pr-2">{product.name}</h3>

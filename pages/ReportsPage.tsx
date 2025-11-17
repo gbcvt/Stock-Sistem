@@ -1,18 +1,17 @@
-
 import React, { useState, useMemo } from 'react';
-import type { AdjustmentLog } from '../types';
+import type { AdjustmentLog, Supplier } from '../types';
 import AdjustmentsTable from '../components/AdjustmentsTable';
 
 interface ReportsPageProps {
   adjustmentHistory: AdjustmentLog[];
+  suppliers: Supplier[];
 }
 
-const ReportsPage: React.FC<ReportsPageProps> = ({ adjustmentHistory }) => {
+const ReportsPage: React.FC<ReportsPageProps> = ({ adjustmentHistory, suppliers }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
   const filteredHistory = useMemo(() => {
-    // Se nenhuma data for selecionada, retorna todo o histórico
     if (!startDate && !endDate) {
       return adjustmentHistory;
     }
@@ -21,13 +20,11 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ adjustmentHistory }) => {
       const logDate = new Date(log.date);
 
       if (startDate) {
-        // Adiciona 'T00:00:00' para garantir que a data seja interpretada no fuso horário local
         const start = new Date(`${startDate}T00:00:00`);
         if (logDate < start) return false;
       }
 
       if (endDate) {
-        // Adiciona 'T23:59:59' para cobrir o dia inteiro no fuso horário local
         const end = new Date(`${endDate}T23:59:59`);
         if (logDate > end) return false;
       }
@@ -65,7 +62,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ adjustmentHistory }) => {
       </div>
 
       {filteredHistory.length > 0 ? (
-        <AdjustmentsTable logs={filteredHistory} />
+        <AdjustmentsTable logs={filteredHistory} suppliers={suppliers}/>
       ) : (
         <div className="text-center py-16 px-4">
           <p className="text-stone-600 text-xl font-semibold">Nenhum ajuste encontrado</p>

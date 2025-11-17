@@ -43,11 +43,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onAdjustStoc
 
   return (
     <div className={`bg-white rounded-xl shadow-md overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-t-4 ${status.borderClass}`}>
-      <img
-        className="h-48 w-full object-cover"
-        src={product.imageUrl}
-        alt={product.name}
-      />
       <div className="p-6 flex flex-col flex-grow">
         <div className="flex justify-between items-center">
             <h3 className="text-xl font-semibold text-stone-800 truncate pr-2">{product.name}</h3>

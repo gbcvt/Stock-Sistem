@@ -1,62 +1,65 @@
 import { useState, useCallback, useMemo } from 'react';
-import type { Product, AdjustmentData, AdjustmentLog } from '../types';
+import type { Product, AdjustmentData, AdjustmentLog, Recipe } from '../types';
 
 const initialProducts: Product[] = [
   {
     id: '1',
-    name: 'Pão Francês',
-    description: 'Pão tradicional crocante por fora e macio por dentro.',
-    stock: 55,
-    reorderLevel: 50,
-    imageUrl: 'https://images.unsplash.com/photo-1598373182133-52452f7691ef?q=80&w=400&auto=format&fit=crop',
-    unitPrice: 0.75,
+    name: 'Farinha de Trigo',
+    description: 'Farinha de trigo tipo 1, ideal para pães e bolos. Estoque em quilogramas (kg).',
+    stock: 22,
+    reorderLevel: 10,
+    averageCost: 4.50,
   },
   {
     id: '2',
-    name: 'Croissant de Manteiga',
-    description: 'Clássico croissant francês, amanteigado e folhado.',
-    stock: 18,
-    reorderLevel: 20,
-    imageUrl: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?q=80&w=400&auto=format&fit=crop',
-    unitPrice: 4.50,
+    name: 'Ovos',
+    description: 'Ovos brancos tipo grande. Estoque em unidades.',
+    stock: 48,
+    reorderLevel: 60,
+    averageCost: 0.80,
   },
   {
     id: '3',
-    name: 'Bolo de Chocolate',
-    description: 'Bolo fofinho com cobertura cremosa de chocolate.',
+    name: 'Açúcar Refinado',
+    description: 'Açúcar refinado para confeitaria e massas. Estoque em quilogramas (kg).',
     stock: 8,
     reorderLevel: 5,
-    imageUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=400&auto=format&fit=crop',
-    unitPrice: 35.00,
+    averageCost: 5.20,
   },
   {
     id: '4',
-    name: 'Sonho de Creme',
-    description: 'Doce frito recheado com creme de baunilha e polvilhado com açúcar.',
-    stock: 60,
-    reorderLevel: 30,
-    imageUrl: 'https://images.unsplash.com/photo-1621204093964-b0578f7311c3?q=80&w=400&auto=format&fit=crop',
-    unitPrice: 5.00,
+    name: 'Manteiga sem Sal',
+    description: 'Manteiga sem sal de primeira qualidade. Estoque em gramas (g).',
+    stock: 2200,
+    reorderLevel: 1000,
+    averageCost: 0.08,
   },
-    {
+  {
     id: '5',
-    name: 'Baguete',
-    description: 'Pão longo e fino com casca crocante, ideal para sanduíches.',
-    stock: 25,
-    reorderLevel: 15,
-    imageUrl: 'https://images.unsplash.com/photo-1556909172-6ab63f18fd12?q=80&w=400&auto=format&fit=crop',
-    unitPrice: 6.00,
+    name: 'Leite Integral',
+    description: 'Leite integral UHT. Estoque em litros (L).',
+    stock: 12,
+    reorderLevel: 10,
+    averageCost: 4.80,
   },
   {
     id: '6',
-    name: 'Pão de Queijo',
-    description: 'Pequenos pães de queijo macios e deliciosos, perfeitos para um lanche.',
-    stock: 200,
-    reorderLevel: 100,
-    imageUrl: 'https://images.unsplash.com/photo-1593570275883-207a90893f41?q=80&w=400&auto=format&fit=crop',
-    unitPrice: 1.50,
+    name: 'Fermento Biológico Seco',
+    description: 'Fermento biológico seco instantâneo. Estoque em gramas (g).',
+    stock: 450,
+    reorderLevel: 250,
+    averageCost: 0.03,
+  },
+  {
+    id: '7',
+    name: 'Chocolate em Pó 50%',
+    description: 'Chocolate em pó 50% cacau. Estoque em gramas (g).',
+    stock: 1500,
+    reorderLevel: 800,
+    averageCost: 0.09,
   },
 ];
+
 
 export const useProducts = () => {
   const [products, setProducts] = useState<Product[]>(initialProducts);
@@ -87,7 +90,9 @@ export const useProducts = () => {
       date: new Date().toISOString(),
       type: adjustment.type,
       value: adjustment.value,
-      cost: adjustment.cost,
+      totalPurchaseCost: adjustment.totalPurchaseCost,
+      supplierId: adjustment.supplierId,
+      expirationDate: adjustment.expirationDate,
     };
     
     setAdjustmentHistory(prev => [newLog, ...prev]);
@@ -99,9 +104,16 @@ export const useProducts = () => {
         }
         
         let newStock = p.stock;
+        let newAverageCost = p.averageCost;
+
         switch(adjustment.type) {
             case 'add':
                 newStock += adjustment.value;
+                const purchaseCost = adjustment.totalPurchaseCost || 0;
+                if (newStock > 0 && purchaseCost > 0 && adjustment.value > 0) {
+                    const oldTotalValue = p.stock * p.averageCost;
+                    newAverageCost = (oldTotalValue + purchaseCost) / newStock;
+                }
                 break;
             case 'remove':
                 newStock -= adjustment.value;
@@ -111,8 +123,56 @@ export const useProducts = () => {
                 break;
         }
 
-        return { ...p, stock: Math.max(0, newStock) };
+        return { ...p, stock: Math.max(0, newStock), averageCost: newAverageCost };
       })
+    );
+  }, [products]);
+
+  const handleProduction = useCallback((recipe: Recipe, batches: number) => {
+    const productionLogs: AdjustmentLog[] = [];
+    const productUpdates = new Map<string, { newStock: number }>();
+    let canProduce = true;
+
+    for (const ingredient of recipe.ingredients) {
+        const product = products.find(p => p.id === ingredient.productId);
+        if (!product) {
+            alert(`Insumo com ID ${ingredient.productId} não encontrado.`);
+            canProduce = false;
+            break;
+        };
+
+        const quantityToRemove = ingredient.quantity * batches;
+        
+        if (product.stock < quantityToRemove) {
+            alert(`Estoque insuficiente para ${product.name}. Necessário: ${quantityToRemove}, Disponível: ${product.stock}`);
+            canProduce = false;
+            break;
+        }
+
+        productUpdates.set(product.id, { newStock: product.stock - quantityToRemove });
+
+        productionLogs.push({
+            id: crypto.randomUUID(),
+            productId: product.id,
+            productName: product.name,
+            date: new Date().toISOString(),
+            type: 'remove',
+            value: quantityToRemove,
+            // Note: This could be a new type 'production' in the future
+        });
+    }
+
+    if (!canProduce) return; // Abort transaction
+
+    setAdjustmentHistory(prev => [...productionLogs, ...prev]);
+
+    setProducts(prevProducts =>
+        prevProducts.map(p => {
+            if (productUpdates.has(p.id)) {
+                return { ...p, stock: productUpdates.get(p.id)!.newStock };
+            }
+            return p;
+        })
     );
   }, [products]);
 
@@ -132,5 +192,6 @@ export const useProducts = () => {
     updateProduct,
     adjustStock,
     adjustmentHistory,
+    handleProduction,
   };
 };
