@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import type { Product, AdjustmentData, AdjustmentLog, Recipe } from '../types';
+import type { Product, AdjustmentData, AdjustmentLog } from '../types';
 
 const initialProducts: Product[] = [
   {
@@ -128,54 +128,6 @@ export const useProducts = () => {
     );
   }, [products]);
 
-  const handleProduction = useCallback((recipe: Recipe, batches: number) => {
-    const productionLogs: AdjustmentLog[] = [];
-    const productUpdates = new Map<string, { newStock: number }>();
-    let canProduce = true;
-
-    for (const ingredient of recipe.ingredients) {
-        const product = products.find(p => p.id === ingredient.productId);
-        if (!product) {
-            alert(`Insumo com ID ${ingredient.productId} não encontrado.`);
-            canProduce = false;
-            break;
-        };
-
-        const quantityToRemove = ingredient.quantity * batches;
-        
-        if (product.stock < quantityToRemove) {
-            alert(`Estoque insuficiente para ${product.name}. Necessário: ${quantityToRemove}, Disponível: ${product.stock}`);
-            canProduce = false;
-            break;
-        }
-
-        productUpdates.set(product.id, { newStock: product.stock - quantityToRemove });
-
-        productionLogs.push({
-            id: crypto.randomUUID(),
-            productId: product.id,
-            productName: product.name,
-            date: new Date().toISOString(),
-            type: 'remove',
-            value: quantityToRemove,
-            // Note: This could be a new type 'production' in the future
-        });
-    }
-
-    if (!canProduce) return; // Abort transaction
-
-    setAdjustmentHistory(prev => [...productionLogs, ...prev]);
-
-    setProducts(prevProducts =>
-        prevProducts.map(p => {
-            if (productUpdates.has(p.id)) {
-                return { ...p, stock: productUpdates.get(p.id)!.newStock };
-            }
-            return p;
-        })
-    );
-  }, [products]);
-
   const sortedProducts = useMemo(() => {
     return [...products].sort((a, b) => {
       const ratioA = a.reorderLevel > 0 ? a.stock / a.reorderLevel : Infinity;
@@ -192,6 +144,5 @@ export const useProducts = () => {
     updateProduct,
     adjustStock,
     adjustmentHistory,
-    handleProduction,
   };
 };

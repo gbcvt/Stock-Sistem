@@ -6,6 +6,7 @@ import ArchiveIcon from './icons/ArchiveIcon';
 import ChefHatIcon from './icons/ChefHatIcon';
 import TruckIcon from './icons/TruckIcon';
 import XIcon from './icons/XIcon';
+import ClipboardListIcon from './icons/ClipboardListIcon';
 
 interface SidebarProps {
     currentPage: Page;
@@ -54,6 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, isSideba
     const navItems = [
         { id: 'dashboard', label: 'Dashboard', icon: HomeIcon },
         { id: 'inventory', label: 'Inventário', icon: PackageIcon },
+        { id: 'shoppinglist', label: 'Lista de Compras', icon: ClipboardListIcon },
         { id: 'recipes', label: 'Receitas', icon: ChefHatIcon },
         { id: 'suppliers', label: 'Fornecedores', icon: TruckIcon },
         { id: 'reports', label: 'Relatórios', icon: ArchiveIcon },

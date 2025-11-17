@@ -5,3 +5,27 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+
+@media print {
+    body, html {
+        background-color: white !important;
+    }
+    .no-print {
+        display: none !important;
+    }
+    main {
+        padding: 0 !important;
+    }
+    .printable-area {
+        padding: 2rem;
+        box-shadow: none !important;
+        border: none !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+    }
+    
+    @page {
+      size: auto;
+      margin: 20mm;
+    }
+}

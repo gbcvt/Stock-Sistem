@@ -4,25 +4,26 @@ import ProductModal from './components/ProductModal';
 import StockAdjustModal from './components/StockAdjustModal';
 import RecipeModal from './components/RecipeModal';
 import SupplierModal from './components/SupplierModal';
-import ProductionModal from './components/ProductionModal';
 import Sidebar from './components/Sidebar';
 import DashboardPage from './pages/DashboardPage';
 import InventoryPage from './pages/InventoryPage';
 import ReportsPage from './pages/ReportsPage';
 import RecipesPage from './pages/RecipesPage';
 import SuppliersPage from './pages/SuppliersPage';
+import ShoppingListPage from './pages/ShoppingListPage';
 import type { Product, AdjustmentData, Recipe, Supplier } from './types';
 import { useProducts } from './hooks/useProducts';
 import { useRecipes } from './hooks/useRecipes';
 import { useSuppliers } from './hooks/useSuppliers';
 
-export type Page = 'dashboard' | 'inventory' | 'reports' | 'recipes' | 'suppliers';
+export type Page = 'dashboard' | 'inventory' | 'recipes' | 'suppliers' | 'reports' | 'shoppinglist';
 export const pageTitles: Record<Page, string> = {
   dashboard: 'Dashboard',
   inventory: 'Inventário',
-  reports: 'Relatórios',
   recipes: 'Receitas',
-  suppliers: 'Fornecedores'
+  suppliers: 'Fornecedores',
+  reports: 'Relatórios',
+  shoppinglist: 'Lista de Compras'
 };
 
 const App: React.FC = () => {
@@ -33,7 +34,6 @@ const App: React.FC = () => {
     updateProduct, 
     adjustStock, 
     adjustmentHistory,
-    handleProduction,
   } = useProducts();
   const { recipes, addRecipe, updateRecipe, deleteRecipe } = useRecipes();
   const { suppliers, addSupplier, updateSupplier, deleteSupplier } = useSuppliers();
@@ -42,14 +42,12 @@ const App: React.FC = () => {
   const [isStockModalOpen, setStockModalOpen] = useState(false);
   const [isRecipeModalOpen, setRecipeModalOpen] = useState(false);
   const [isSupplierModalOpen, setSupplierModalOpen] = useState(false);
-  const [isProductionModalOpen, setProductionModalOpen] = useState(false);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null);
   const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null);
   const [adjustingStockProduct, setAdjustingStockProduct] = useState<Product | null>(null);
-  const [producingRecipe, setProducingRecipe] = useState<Recipe | null>(null);
   
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
 
@@ -65,14 +63,12 @@ const App: React.FC = () => {
   const handleOpenEditRecipeModal = (recipe: Recipe) => { setEditingRecipe(recipe); setRecipeModalOpen(true); };
   const handleOpenAddSupplierModal = () => { setEditingSupplier(null); setSupplierModalOpen(true); };
   const handleOpenEditSupplierModal = (supplier: Supplier) => { setEditingSupplier(supplier); setSupplierModalOpen(true); };
-  const handleOpenProductionModal = (recipe: Recipe) => { setProducingRecipe(recipe); setProductionModalOpen(true); };
   
   const handleCloseModals = () => {
     setProductModalOpen(false);
     setStockModalOpen(false);
     setRecipeModalOpen(false);
     setSupplierModalOpen(false);
-    setProductionModalOpen(false);
   };
 
   // Save Handlers
@@ -92,18 +88,15 @@ const App: React.FC = () => {
     adjustStock(productId, adjustmentData);
     handleCloseModals();
   };
-  const handleConfirmProduction = (recipe: Recipe, batches: number) => {
-    handleProduction(recipe, batches);
-    handleCloseModals();
-  }
 
   const renderPage = () => {
     switch (currentPage) {
       case 'dashboard': return <DashboardPage products={products} adjustmentHistory={adjustmentHistory} onAdjustStock={handleOpenStockModal} />;
       case 'inventory': return <InventoryPage onAddProduct={handleOpenAddModal} products={sortedProducts} onEditProduct={handleOpenEditModal} onAdjustStock={handleOpenStockModal}/>;
       case 'reports': return <ReportsPage adjustmentHistory={adjustmentHistory} suppliers={suppliers} />;
-      case 'recipes': return <RecipesPage recipes={recipes} products={products} onAdd={handleOpenAddRecipeModal} onEdit={handleOpenEditRecipeModal} onDelete={deleteRecipe} onProduce={handleOpenProductionModal} />;
+      case 'recipes': return <RecipesPage recipes={recipes} products={products} onAdd={handleOpenAddRecipeModal} onEdit={handleOpenEditRecipeModal} onDelete={deleteRecipe} />;
       case 'suppliers': return <SuppliersPage suppliers={suppliers} onAdd={handleOpenAddSupplierModal} onEdit={handleOpenEditSupplierModal} onDelete={deleteSupplier} />;
+      case 'shoppinglist': return <ShoppingListPage products={products} />;
       default: return null;
     }
   };
@@ -134,7 +127,6 @@ const App: React.FC = () => {
       <StockAdjustModal isOpen={isStockModalOpen} onClose={handleCloseModals} onAdjust={handleAdjustStock} product={adjustingStockProduct} suppliers={suppliers} />
       <RecipeModal isOpen={isRecipeModalOpen} onClose={handleCloseModals} onSave={handleSaveRecipe} recipeToEdit={editingRecipe} products={products} />
       <SupplierModal isOpen={isSupplierModalOpen} onClose={handleCloseModals} onSave={handleSaveSupplier} supplierToEdit={editingSupplier} />
-      {producingRecipe && <ProductionModal isOpen={isProductionModalOpen} onClose={handleCloseModals} onConfirm={handleConfirmProduction} recipe={producingRecipe} />}
     </div>
   );
 };

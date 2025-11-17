@@ -10,14 +10,9 @@ interface RecipesPageProps {
   onAdd: () => void;
   onEdit: (recipe: Recipe) => void;
   onDelete: (recipeId: string) => void;
-  onProduce: (recipe: Recipe) => void;
 }
 
-const PlayIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polygon points="5 3 19 12 5 21 5 3"/></svg>
-);
-
-const RecipeCard: React.FC<{ recipe: Recipe; productMap: Map<string, string>; onEdit: () => void; onDelete: () => void; onProduce: () => void; }> = ({ recipe, productMap, onEdit, onDelete, onProduce }) => {
+const RecipeCard: React.FC<{ recipe: Recipe; productMap: Map<string, string>; onEdit: () => void; onDelete: () => void; }> = ({ recipe, productMap, onEdit, onDelete }) => {
   return (
     <div className="bg-white rounded-xl shadow-sm flex flex-col transition-shadow duration-200 hover:shadow-lg">
       <div className="p-6 flex-grow">
@@ -39,22 +34,19 @@ const RecipeCard: React.FC<{ recipe: Recipe; productMap: Map<string, string>; on
            </div>
         )}
       </div>
-      <div className="p-4 bg-slate-50/70 grid grid-cols-3 gap-2">
+      <div className="p-4 bg-slate-50/70 grid grid-cols-2 gap-2">
         <button onClick={onEdit} className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md text-orange-700 bg-orange-100 hover:bg-orange-200 transition-colors">
           <EditIcon className="w-4 h-4 mr-2"/> Editar
         </button>
         <button onClick={onDelete} className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 transition-colors">
           <TrashIcon className="w-4 h-4 mr-2"/> Remover
         </button>
-        <button onClick={onProduce} className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 transition-colors">
-          <PlayIcon className="w-4 h-4 mr-2"/> Produzir
-        </button>
       </div>
     </div>
   );
 }
 
-const RecipesPage: React.FC<RecipesPageProps> = ({ recipes, products, onAdd, onEdit, onDelete, onProduce }) => {
+const RecipesPage: React.FC<RecipesPageProps> = ({ recipes, products, onAdd, onEdit, onDelete }) => {
   const productMap = React.useMemo(() => new Map(products.map(p => [p.id, p.name])), [products]);
 
   return (
@@ -74,7 +66,6 @@ const RecipesPage: React.FC<RecipesPageProps> = ({ recipes, products, onAdd, onE
                 productMap={productMap}
                 onEdit={() => onEdit(recipe)}
                 onDelete={() => onDelete(recipe.id)}
-                onProduce={() => onProduce(recipe)}
             />
           ))}
         </div>
