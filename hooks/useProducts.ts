@@ -65,7 +65,7 @@ export const useProducts = () => {
   const addProduct = useCallback((productData: Omit<Product, 'id'>) => {
     const newProduct: Product = {
       ...productData,
-      id: new Date().toISOString(),
+      id: crypto.randomUUID(),
     };
     setProducts(prevProducts => [newProduct, ...prevProducts]);
   }, []);
@@ -77,22 +77,26 @@ export const useProducts = () => {
   }, []);
 
   const adjustStock = useCallback((productId: string, adjustment: AdjustmentData) => {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    const newLog: AdjustmentLog = {
+      id: crypto.randomUUID(),
+      productId: product.id,
+      productName: product.name,
+      date: new Date().toISOString(),
+      type: adjustment.type,
+      value: adjustment.value,
+      cost: adjustment.cost,
+    };
+    
+    setAdjustmentHistory(prev => [newLog, ...prev]);
+    
     setProducts(prevProducts =>
       prevProducts.map(p => {
         if (p.id !== productId) {
           return p;
         }
-
-        const newLog: AdjustmentLog = {
-          id: new Date().toISOString(),
-          productId: p.id,
-          productName: p.name,
-          date: new Date().toISOString(),
-          type: adjustment.type,
-          value: adjustment.value,
-          cost: adjustment.cost,
-        };
-        setAdjustmentHistory(prev => [newLog, ...prev]);
         
         let newStock = p.stock;
         switch(adjustment.type) {
@@ -110,7 +114,7 @@ export const useProducts = () => {
         return { ...p, stock: Math.max(0, newStock) };
       })
     );
-  }, []);
+  }, [products]);
 
   const sortedProducts = useMemo(() => {
     return [...products].sort((a, b) => {

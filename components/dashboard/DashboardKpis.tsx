@@ -4,6 +4,7 @@ import type { Product, AdjustmentLog } from '../../types';
 interface DashboardKpisProps {
   products: Product[];
   adjustmentHistory: AdjustmentLog[];
+  filterDate: Date;
 }
 
 const DollarSignIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -37,24 +38,25 @@ const StatCard: React.FC<{ title: string; value: string | number; icon: React.Re
   </div>
 );
 
-const DashboardKpis: React.FC<DashboardKpisProps> = ({ products, adjustmentHistory }) => {
+const DashboardKpis: React.FC<DashboardKpisProps> = ({ products, adjustmentHistory, filterDate }) => {
   const kpis = useMemo(() => {
     const totalValue = products.reduce((sum, p) => sum + p.stock * p.unitPrice, 0);
     const attentionItems = products.filter(p => p.stock < p.reorderLevel * 1.2).length;
     const productVarieties = products.length;
 
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const recentInvestment = adjustmentHistory
-      .filter(log => log.type === 'add' && new Date(log.date) > thirtyDaysAgo && log.cost)
+    const monthlyInvestment = adjustmentHistory
+      .filter(log => log.type === 'add' && log.cost)
       .reduce((sum, log) => sum + (log.cost || 0), 0);
 
-    return { totalValue, attentionItems, productVarieties, recentInvestment };
+    return { totalValue, attentionItems, productVarieties, monthlyInvestment };
   }, [products, adjustmentHistory]);
   
   const formatCurrency = (value: number) => {
     return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   }
+  
+  const investmentLabel = `Investido (${filterDate.toLocaleString('pt-BR', { month: 'short' }).replace('.', '')}/${filterDate.getFullYear().toString().slice(2)})`;
+
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -67,13 +69,13 @@ const DashboardKpis: React.FC<DashboardKpisProps> = ({ products, adjustmentHisto
       <StatCard
         title="Itens em Atenção"
         value={kpis.attentionItems}
-        icon={<AlertTriangleIcon className="h-6 w-6 text-yellow-800" />}
-        color="bg-yellow-100"
+        icon={<AlertTriangleIcon className="h-6 w-6 text-amber-800" />}
+        color="bg-amber-100"
         tooltip="Itens com estoque baixo ou próximo do nível de recompra."
       />
       <StatCard
-        title="Investido (Últimos 30d)"
-        value={formatCurrency(kpis.recentInvestment)}
+        title={investmentLabel}
+        value={formatCurrency(kpis.monthlyInvestment)}
         icon={<ShoppingCartIcon className="h-6 w-6 text-blue-800" />}
         color="bg-blue-100"
       />

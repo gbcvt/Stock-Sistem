@@ -24,16 +24,25 @@ const SlidersIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onAdjustStock }) => {
-  const isLowStock = product.stock < product.reorderLevel;
-
-  const stockStatusClass = isLowStock
-    ? 'bg-red-100 text-red-800'
-    : 'bg-green-100 text-green-800';
   
-  const stockStatusText = isLowStock ? 'Estoque Baixo' : 'Em Estoque';
+  const getStockStatus = () => {
+    if (product.reorderLevel <= 0) {
+      return { text: 'Em Estoque', tagClass: 'bg-green-100 text-green-800', borderClass: 'border-green-500' };
+    }
+    const statusRatio = product.stock / product.reorderLevel;
+    if (statusRatio < 1) {
+      return { text: 'Estoque Baixo', tagClass: 'bg-red-100 text-red-800', borderClass: 'border-red-500' };
+    }
+    if (statusRatio <= 1.2) {
+      return { text: 'Atenção', tagClass: 'bg-amber-100 text-amber-800', borderClass: 'border-amber-500' };
+    }
+    return { text: 'Em Estoque', tagClass: 'bg-green-100 text-green-800', borderClass: 'border-green-500' };
+  };
+
+  const status = getStockStatus();
 
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+    <div className={`bg-white rounded-xl shadow-md overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-t-4 ${status.borderClass}`}>
       <img
         className="h-48 w-full object-cover"
         src={product.imageUrl}
@@ -42,8 +51,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onAdjustStoc
       <div className="p-6 flex flex-col flex-grow">
         <div className="flex justify-between items-center">
             <h3 className="text-xl font-semibold text-stone-800 truncate pr-2">{product.name}</h3>
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${stockStatusClass}`}>
-                {stockStatusText}
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${status.tagClass}`}>
+                {status.text}
             </span>
         </div>
         <p className="mt-2 text-stone-600 text-sm flex-grow">{product.description}</p>

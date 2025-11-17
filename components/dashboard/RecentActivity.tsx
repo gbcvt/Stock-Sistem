@@ -18,10 +18,8 @@ const ActivityIcon: React.FC<{type: AdjustmentLog['type']}> = ({ type }) => {
 
 const RecentActivity: React.FC<RecentActivityProps> = ({ history }) => {
     
-  const recentHistory = history.slice(0, 5);
-
-  if (recentHistory.length === 0) {
-    return <div className="text-center py-10 px-4 text-stone-500">Nenhuma atividade recente.</div>;
+  if (history.length === 0) {
+    return <div className="text-center py-10 px-4 text-stone-500">Nenhuma atividade no período selecionado.</div>;
   }
 
   const formatDescription = (log: AdjustmentLog) => {
@@ -49,12 +47,12 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ history }) => {
   }
 
   return (
-    <div className="flow-root">
+    <div className="flow-root max-h-80 overflow-y-auto">
         <ul role="list" className="-mb-8 px-6 pb-6">
-            {recentHistory.map((log, logIdx) => (
+            {history.map((log, logIdx) => (
             <li key={log.id}>
                 <div className="relative pb-8">
-                {logIdx !== recentHistory.length - 1 ? (
+                {logIdx !== history.length - 1 ? (
                     <span className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-stone-200" aria-hidden="true" />
                 ) : null}
                 <div className="relative flex items-start space-x-3">

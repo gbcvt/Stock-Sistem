@@ -1,16 +1,18 @@
 import React from 'react';
 import ChartPieIcon from './icons/ChartPieIcon';
 import ListIcon from './icons/ListIcon';
+import ArchiveIcon from './icons/ArchiveIcon';
 
 interface AppNavigationProps {
-    currentPage: 'dashboard' | 'inventory';
-    setCurrentPage: (page: 'dashboard' | 'inventory') => void;
+    currentPage: 'dashboard' | 'inventory' | 'reports';
+    setCurrentPage: (page: 'dashboard' | 'inventory' | 'reports') => void;
 }
 
 const AppNavigation: React.FC<AppNavigationProps> = ({ currentPage, setCurrentPage }) => {
     const navItems = [
         { id: 'dashboard', label: 'Dashboard', icon: ChartPieIcon },
         { id: 'inventory', label: 'Inventário', icon: ListIcon },
+        { id: 'reports', label: 'Relatórios', icon: ArchiveIcon },
     ];
 
     return (
@@ -21,7 +23,7 @@ const AppNavigation: React.FC<AppNavigationProps> = ({ currentPage, setCurrentPa
                     name="tabs"
                     className="block w-full rounded-md border-stone-300 focus:border-orange-500 focus:ring-orange-500"
                     value={currentPage}
-                    onChange={(e) => setCurrentPage(e.target.value as 'dashboard' | 'inventory')}
+                    onChange={(e) => setCurrentPage(e.target.value as 'dashboard' | 'inventory' | 'reports')}
                 >
                     {navItems.map((item) => (
                         <option key={item.id} value={item.id}>{item.label}</option>
@@ -34,7 +36,7 @@ const AppNavigation: React.FC<AppNavigationProps> = ({ currentPage, setCurrentPa
                         {navItems.map((item) => (
                             <button
                                 key={item.id}
-                                onClick={() => setCurrentPage(item.id as 'dashboard' | 'inventory')}
+                                onClick={() => setCurrentPage(item.id as 'dashboard' | 'inventory' | 'reports')}
                                 className={`${
                                     currentPage === item.id
                                         ? 'border-orange-700 text-orange-800'

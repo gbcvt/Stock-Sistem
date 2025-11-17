@@ -1,4 +1,3 @@
-
 import React from 'react';
 import type { Product } from '../types';
 import EditIcon from './icons/EditIcon';
@@ -24,16 +23,25 @@ const SlidersIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 );
 
 const ProductListItem: React.FC<ProductListItemProps> = ({ product, onEdit, onAdjustStock }) => {
-  const isLowStock = product.stock < product.reorderLevel;
-  const stockRatio = product.reorderLevel > 0 ? product.stock / product.reorderLevel : 2;
-  const stockPercentage = Math.min((stockRatio / 1.5) * 100, 100);
-
-  const progressBarColor = isLowStock
-    ? 'bg-red-500'
-    : stockRatio < 1.2 ? 'bg-yellow-500' : 'bg-green-500';
+  const getStockStatus = () => {
+    if (product.reorderLevel <= 0) {
+      return { text: 'Em Estoque', tagClass: 'bg-green-100 text-green-800', progressClass: 'bg-green-500', borderClass: 'border-green-500' };
+    }
+    const statusRatio = product.stock / product.reorderLevel;
+    if (statusRatio < 1) {
+      return { text: 'Estoque Baixo', tagClass: 'bg-red-100 text-red-800', progressClass: 'bg-red-500', borderClass: 'border-red-500' };
+    }
+    if (statusRatio <= 1.2) {
+      return { text: 'Atenção', tagClass: 'bg-amber-100 text-amber-800', progressClass: 'bg-amber-500', borderClass: 'border-amber-500' };
+    }
+    return { text: 'Em Estoque', tagClass: 'bg-green-100 text-green-800', progressClass: 'bg-green-500', borderClass: 'border-green-500' };
+  };
+  
+  const status = getStockStatus();
+  const stockPercentage = Math.min((product.stock / (product.reorderLevel * 1.5)) * 100, 100);
 
   return (
-    <div className="flex flex-col sm:flex-row items-center transition-colors duration-200 hover:bg-stone-50">
+    <div className={`flex flex-col sm:flex-row items-center transition-colors duration-200 hover:bg-stone-50 border-l-4 ${status.borderClass}`}>
       <img
         className="h-32 w-full sm:h-28 sm:w-28 object-cover flex-shrink-0"
         src={product.imageUrl}
@@ -42,8 +50,8 @@ const ProductListItem: React.FC<ProductListItemProps> = ({ product, onEdit, onAd
       <div className="p-4 flex-grow w-full">
         <div className="flex justify-between items-start">
             <h3 className="text-lg font-semibold text-stone-800 truncate pr-2">{product.name}</h3>
-             <span className={`hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${isLowStock ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
-                {isLowStock ? 'Estoque Baixo' : 'Em Estoque'}
+             <span className={`hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${status.tagClass}`}>
+                {status.text}
             </span>
         </div>
         <p className="mt-1 text-stone-600 text-sm hidden md:block max-w-prose">{product.description}</p>
@@ -54,7 +62,7 @@ const ProductListItem: React.FC<ProductListItemProps> = ({ product, onEdit, onAd
           </div>
           <div className="w-full bg-stone-200 rounded-full h-1.5 mt-1 overflow-hidden">
             <div
-              className={`h-full rounded-full ${progressBarColor} transition-all duration-500`}
+              className={`h-full rounded-full ${status.progressClass} transition-all duration-500`}
               style={{ width: `${stockPercentage}%` }}
             ></div>
           </div>

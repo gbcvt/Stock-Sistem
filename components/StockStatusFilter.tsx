@@ -1,4 +1,3 @@
-
 import React from 'react';
 import type { StockStatus } from '../types';
 
@@ -10,7 +9,7 @@ interface StockStatusFilterProps {
 const filters: { id: StockStatus; label: string; activeClass: string; inactiveClass: string }[] = [
   { id: 'all', label: 'Todos', activeClass: 'bg-stone-700 text-white border-stone-700', inactiveClass: 'bg-white text-stone-700 hover:bg-stone-100 border-stone-300' },
   { id: 'ok', label: 'Estoque OK', activeClass: 'bg-green-600 text-white border-green-600', inactiveClass: 'bg-white text-green-700 hover:bg-green-50 border-green-300' },
-  { id: 'warning', label: 'Atenção', activeClass: 'bg-yellow-500 text-white border-yellow-500', inactiveClass: 'bg-white text-yellow-700 hover:bg-yellow-50 border-yellow-300' },
+  { id: 'warning', label: 'Atenção', activeClass: 'bg-amber-500 text-white border-amber-500', inactiveClass: 'bg-white text-amber-800 hover:bg-amber-50 border-amber-300' },
   { id: 'low', label: 'Estoque Baixo', activeClass: 'bg-red-600 text-white border-red-600', inactiveClass: 'bg-white text-red-700 hover:bg-red-50 border-red-300' },
 ];
 

@@ -14,32 +14,57 @@ interface ProductModalProps {
 const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, productToEdit }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [stock, setStock] = useState(0);
-  const [reorderLevel, setReorderLevel] = useState(0);
+  const [stock, setStock] = useState('');
+  const [reorderLevel, setReorderLevel] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-  const [unitPrice, setUnitPrice] = useState(0);
+  const [unitPrice, setUnitPrice] = useState('');
 
   useEffect(() => {
+    if (!isOpen) return;
+
     if (productToEdit) {
       setName(productToEdit.name);
       setDescription(productToEdit.description);
-      setStock(productToEdit.stock);
-      setReorderLevel(productToEdit.reorderLevel);
+      setStock(String(productToEdit.stock));
+      setReorderLevel(String(productToEdit.reorderLevel));
       setImageUrl(productToEdit.imageUrl);
-      setUnitPrice(productToEdit.unitPrice);
+      setUnitPrice(String(productToEdit.unitPrice));
     } else {
       setName('');
       setDescription('');
-      setStock(0);
-      setReorderLevel(10);
+      setStock('1');
+      setReorderLevel('10');
       setImageUrl('https://images.unsplash.com/photo-1568254183919-78a4f43a2877?q=80&w=400&auto=format&fit=crop');
-      setUnitPrice(0);
+      setUnitPrice('0.00');
     }
   }, [productToEdit, isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const productData = { name, description, stock, reorderLevel, imageUrl, unitPrice };
+    
+    const stockNum = parseInt(stock, 10);
+    const reorderLevelNum = parseInt(reorderLevel, 10);
+    const unitPriceNum = parseFloat(unitPrice);
+
+    if (stock.trim() === '' || isNaN(stockNum) || stockNum < 0) {
+        alert('A quantidade em estoque deve ser um número válido maior ou igual a zero.');
+        return;
+    }
+    if (reorderLevel.trim() === '' || isNaN(reorderLevelNum) || reorderLevelNum < 0) {
+        alert('O nível para recompra deve ser um número válido maior ou igual a zero.');
+        return;
+    }
+    if (unitPrice.trim() === '' || isNaN(unitPriceNum) || unitPriceNum < 0) {
+        alert('O preço unitário deve ser um número válido maior ou igual a zero.');
+        return;
+    }
+    
+    if (!productToEdit && stockNum <= 0) {
+        alert('Ao adicionar um novo produto, o estoque inicial deve ser maior que zero.');
+        return;
+    }
+
+    const productData = { name, description, stock: stockNum, reorderLevel: reorderLevelNum, imageUrl, unitPrice: unitPriceNum };
     if (productToEdit) {
       onSave({ ...productData, id: productToEdit.id });
     } else {
@@ -74,11 +99,11 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
               <div>
                 <label htmlFor="stock" className="block text-sm font-medium text-stone-700">Quantidade em Estoque</label>
                 <div className="mt-1 flex items-center">
-                    <button type="button" onClick={() => setStock(s => Math.max(0, s - 1))} className="px-3 py-2 border border-r-0 border-stone-300 rounded-l-md bg-stone-50 hover:bg-stone-100 text-stone-600 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-colors" aria-label="Diminuir quantidade">
+                    <button type="button" onClick={() => setStock(s => String(Math.max(0, (parseInt(s, 10) || 0) - 1)))} className="px-3 py-2 border border-r-0 border-stone-300 rounded-l-md bg-stone-50 hover:bg-stone-100 text-stone-600 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-colors" aria-label="Diminuir quantidade">
                         <MinusIcon className="h-4 w-4" />
                     </button>
-                    <input type="number" id="stock" value={stock} onChange={e => setStock(parseInt(e.target.value, 10) || 0)} min="0" required className="w-full px-3 py-2 border-t border-b border-stone-300 text-center focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm [-moz-appearance:_textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"/>
-                    <button type="button" onClick={() => setStock(s => s + 1)} className="px-3 py-2 border border-l-0 border-stone-300 rounded-r-md bg-stone-50 hover:bg-stone-100 text-stone-600 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-colors" aria-label="Aumentar quantidade">
+                    <input type="number" id="stock" value={stock} onChange={e => setStock(e.target.value)} min="0" required className="w-full px-3 py-2 border-t border-b border-stone-300 text-center focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm [-moz-appearance:_textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"/>
+                    <button type="button" onClick={() => setStock(s => String((parseInt(s, 10) || 0) + 1))} className="px-3 py-2 border border-l-0 border-stone-300 rounded-r-md bg-stone-50 hover:bg-stone-100 text-stone-600 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-colors" aria-label="Aumentar quantidade">
                         <PlusIcon className="h-4 w-4" />
                     </button>
                 </div>
@@ -86,11 +111,11 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
               <div>
                 <label htmlFor="reorderLevel" className="block text-sm font-medium text-stone-700">Nível para Recompra</label>
                  <div className="mt-1 flex items-center">
-                    <button type="button" onClick={() => setReorderLevel(s => Math.max(0, s - 1))} className="px-3 py-2 border border-r-0 border-stone-300 rounded-l-md bg-stone-50 hover:bg-stone-100 text-stone-600 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-colors" aria-label="Diminuir nível de recompra">
+                    <button type="button" onClick={() => setReorderLevel(s => String(Math.max(0, (parseInt(s, 10) || 0) - 1)))} className="px-3 py-2 border border-r-0 border-stone-300 rounded-l-md bg-stone-50 hover:bg-stone-100 text-stone-600 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-colors" aria-label="Diminuir nível de recompra">
                         <MinusIcon className="h-4 w-4" />
                     </button>
-                    <input type="number" id="reorderLevel" value={reorderLevel} onChange={e => setReorderLevel(parseInt(e.target.value, 10) || 0)} min="0" required className="w-full px-3 py-2 border-t border-b border-stone-300 text-center focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm [-moz-appearance:_textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"/>
-                    <button type="button" onClick={() => setReorderLevel(s => s + 1)} className="px-3 py-2 border border-l-0 border-stone-300 rounded-r-md bg-stone-50 hover:bg-stone-100 text-stone-600 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-colors" aria-label="Aumentar nível de recompra">
+                    <input type="number" id="reorderLevel" value={reorderLevel} onChange={e => setReorderLevel(e.target.value)} min="0" required className="w-full px-3 py-2 border-t border-b border-stone-300 text-center focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm [-moz-appearance:_textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"/>
+                    <button type="button" onClick={() => setReorderLevel(s => String((parseInt(s, 10) || 0) + 1))} className="px-3 py-2 border border-l-0 border-stone-300 rounded-r-md bg-stone-50 hover:bg-stone-100 text-stone-600 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-colors" aria-label="Aumentar nível de recompra">
                         <PlusIcon className="h-4 w-4" />
                     </button>
                 </div>
@@ -106,7 +131,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                         type="number" 
                         id="unitPrice" 
                         value={unitPrice} 
-                        onChange={e => setUnitPrice(parseFloat(e.target.value) || 0)} 
+                        onChange={e => setUnitPrice(e.target.value)}
                         min="0"
                         step="0.01"
                         placeholder="0.00"

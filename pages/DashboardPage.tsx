@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import type { Product, AdjustmentLog } from '../types';
 import DashboardKpis from '../components/dashboard/DashboardKpis';
 import StockStatusChart from '../components/dashboard/StockStatusChart';
 import ValueByProductChart from '../components/dashboard/ValueByProductChart';
 import LowStockList from '../components/dashboard/LowStockList';
 import RecentActivity from '../components/dashboard/RecentActivity';
+import DashboardDateFilter from '../components/dashboard/DashboardDateFilter';
 
 interface DashboardPageProps {
   products: Product[];
@@ -13,9 +14,36 @@ interface DashboardPageProps {
 }
 
 const DashboardPage: React.FC<DashboardPageProps> = ({ products, adjustmentHistory, onAdjustStock }) => {
+  const [filterDate, setFilterDate] = useState(new Date());
+
+  const availableYears = useMemo(() => {
+    const years = new Set(adjustmentHistory.map(log => new Date(log.date).getFullYear()));
+    if (!years.has(new Date().getFullYear())) {
+        years.add(new Date().getFullYear());
+    }
+    // FIX: Explicitly type the sort parameters as numbers to resolve the TypeScript error on the arithmetic operation.
+    return Array.from(years).sort((a: number, b: number) => b - a);
+  }, [adjustmentHistory]);
+
+  const filteredHistoryForMonth = useMemo(() => {
+    return adjustmentHistory.filter(log => {
+      const logDate = new Date(log.date);
+      return logDate.getMonth() === filterDate.getMonth() && logDate.getFullYear() === filterDate.getFullYear();
+    });
+  }, [adjustmentHistory, filterDate]);
+
   return (
     <div className="space-y-6">
-      <DashboardKpis products={products} adjustmentHistory={adjustmentHistory} />
+      <DashboardDateFilter
+        filterDate={filterDate}
+        setFilterDate={setFilterDate}
+        availableYears={availableYears}
+      />
+      <DashboardKpis 
+        products={products} 
+        adjustmentHistory={filteredHistoryForMonth} 
+        filterDate={filterDate}
+      />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1 bg-white p-6 rounded-lg shadow-sm">
             <h3 className="text-lg font-semibold text-stone-700">Saúde do Estoque</h3>
@@ -32,8 +60,10 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ products, adjustmentHisto
             <LowStockList products={products} onAdjustStock={onAdjustStock} />
         </div>
         <div className="bg-white rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold text-stone-700 p-6">Atividade Recente</h3>
-            <RecentActivity history={adjustmentHistory} />
+            <h3 className="text-lg font-semibold text-stone-700 p-6">
+              Atividades em {filterDate.toLocaleString('pt-BR', { month: 'long', year: 'numeric' })}
+            </h3>
+            <RecentActivity history={filteredHistoryForMonth} />
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ import StockAdjustModal from './components/StockAdjustModal';
 import AppNavigation from './components/AppNavigation';
 import DashboardPage from './pages/DashboardPage';
 import InventoryPage from './pages/InventoryPage';
+import ReportsPage from './pages/ReportsPage';
 import type { Product, AdjustmentData } from './types';
 import { useProducts } from './hooks/useProducts';
 
@@ -22,7 +23,7 @@ const App: React.FC = () => {
   const [isStockModalOpen, setStockModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [adjustingStockProduct, setAdjustingStockProduct] = useState<Product | null>(null);
-  const [currentPage, setCurrentPage] = useState<'dashboard' | 'inventory'>('dashboard');
+  const [currentPage, setCurrentPage] = useState<'dashboard' | 'inventory' | 'reports'>('dashboard');
 
   const handleOpenAddModal = () => {
     setEditingProduct(null);
@@ -59,6 +60,31 @@ const App: React.FC = () => {
     adjustStock(productId, adjustmentData);
     handleCloseModals();
   };
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'dashboard':
+        return (
+          <DashboardPage
+            products={products}
+            adjustmentHistory={adjustmentHistory}
+            onAdjustStock={handleOpenStockModal}
+          />
+        );
+      case 'inventory':
+        return (
+          <InventoryPage
+            products={sortedProducts}
+            onEditProduct={handleOpenEditModal}
+            onAdjustStock={handleOpenStockModal}
+          />
+        );
+      case 'reports':
+        return <ReportsPage adjustmentHistory={adjustmentHistory} />;
+      default:
+        return null;
+    }
+  };
   
   return (
     <div className="min-h-screen bg-orange-50/50 text-stone-800">
@@ -67,19 +93,7 @@ const App: React.FC = () => {
       <main className="container mx-auto p-4 sm:p-6 lg:p-8">
         <AppNavigation currentPage={currentPage} setCurrentPage={setCurrentPage} />
         <div className="mt-6">
-            {currentPage === 'dashboard' ? (
-                <DashboardPage 
-                    products={products}
-                    adjustmentHistory={adjustmentHistory}
-                    onAdjustStock={handleOpenStockModal}
-                />
-            ) : (
-                <InventoryPage
-                    products={sortedProducts}
-                    onEditProduct={handleOpenEditModal}
-                    onAdjustStock={handleOpenStockModal}
-                />
-            )}
+            {renderPage()}
         </div>
       </main>
 
