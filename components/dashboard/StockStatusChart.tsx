@@ -51,4 +51,39 @@ const StockStatusChart: React.FC<StockStatusChartProps> = ({ products }) => {
     <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 h-full mt-4">
       <div className="relative w-48 h-48 flex-shrink-0">
         <svg className="w-full h-full" viewBox="0 0 100 100" style={{ transform: 'rotate(-90deg)' }}>
-          <circle
+          <circle className="stroke-stone-200" strokeWidth="10" fill="transparent" r="40" cx="50" cy="50" />
+          {chartData.map(data => (
+            <circle
+              key={data.label}
+              className={`${data.stroke} transition-all duration-500`}
+              strokeWidth="10"
+              strokeDasharray={circumference}
+              strokeDashoffset={-data.offset}
+              strokeLinecap="round"
+              fill="transparent"
+              r="40"
+              cx="50"
+              cy="50"
+              style={{ strokeDasharray: `${(data.percentage / 100) * circumference} ${circumference}` }}
+            />
+          ))}
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-3xl font-bold text-stone-800">{totalProducts}</span>
+            <span className="text-sm text-stone-500">Produtos</span>
+        </div>
+      </div>
+      <div className="space-y-2">
+        {chartData.map(data => (
+          <div key={data.label} className="flex items-center">
+            <span className={`w-3 h-3 rounded-full mr-2 ${data.color.replace('text-', 'bg-')}`}></span>
+            <span className="text-sm font-medium text-stone-600">{data.label}:</span>
+            <span className="ml-auto text-sm font-semibold text-stone-800">{data.value} ({data.percentage.toFixed(0)}%)</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default StockStatusChart;
